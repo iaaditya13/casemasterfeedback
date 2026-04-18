@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Feedback ,  CaseMaster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F5F0;
+    --surface: #FFFFFF;
+    --surface2: #F0EDE7;
+    --border: #E2DDD6;
+    --border-strong: #C8C2B8;
+    --text: #1A1814;
+    --text-2: #6B6560;
+    --text-3: #A09A94;
+    --green: #2D6A4F;
+    --green-bg: #EAF2EC;
+    --amber: #92400E;
+    --amber-bg: #FEF3C7;
+    --red: #991B1B;
+    --red-bg: #FEE2E2;
+    --blue: #1E40AF;
+    --blue-bg: #EFF6FF;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .back-btn {
+    font-size: 13px;
+    color: var(--text-3);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    user-select: none;
+  }
+  .topbar-title { font-size: 14px; font-weight: 500; color: var(--text); letter-spacing: -0.01em; }
+  .topbar-date { margin-left: auto; font-size: 12px; color: var(--text-3); }
+  .page { max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem 4rem; animation: fadeUp 0.4s ease both; }
+  .case-header { margin-bottom: 1.5rem; }
+  .case-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+  .case-meta { font-size: 12px; color: var(--text-3); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .dot { width: 3px; height: 3px; background: var(--border-strong); border-radius: 50%; display: inline-block; }
+  .score-hero { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+  .score-top { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+  .overall-score { display: flex; flex-direction: column; align-items: center; background: var(--text); color: var(--bg); border-radius: 10px; padding: 10px 18px; min-width: 68px; flex-shrink: 0; }
+  .overall-score .num { font-family: 'DM Serif Display', serif; font-size: 30px; line-height: 1; }
+  .overall-score .lbl { font-size: 9px; letter-spacing: 0.07em; text-transform: uppercase; opacity: 0.55; margin-top: 3px; }
+  .bars-col { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 8px; }
+  .bar-row { display: flex; align-items: center; gap: 8px; }
+  .bar-lbl { font-size: 11px; color: var(--text-2); width: 116px; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; }
+  .bar-fill.low { background: #DC2626; }
+  .bar-fill.mid { background: #D97706; }
+  .bar-fill.high { background: #16A34A; }
+  .bar-val { font-size: 11px; font-weight: 500; width: 28px; text-align: right; color: var(--text-2); }
+  .speech-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+  .s-pill { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; display: flex; flex-direction: column; align-items: center; }
+  .s-pill .sv { font-size: 16px; font-weight: 500; color: var(--text); }
+  .s-pill .sl { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1px; }
+  .section-label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); margin: 1.5rem 0 .75rem; padding-left: 2px; }
+  .acc-list { display: flex; flex-direction: column; gap: 6px; }
+  .acc-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: border-color 0.15s; }
+  .acc-item.is-open { border-color: var(--border-strong); }
+  .acc-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px; cursor: pointer; user-select: none; transition: background 0.15s; }
+  .acc-head:hover { background: var(--bg); }
+  .acc-code { width: 32px; height: 32px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; }
+  .acc-info { flex: 1; }
+  .acc-name { font-size: 13px; font-weight: 500; letter-spacing: -0.01em; color: var(--text); }
+  .acc-sub { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+  .acc-right { display: flex; align-items: center; gap: 8px; }
+  .mini-bar { width: 44px; height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+  .mini-fill { height: 100%; border-radius: 2px; }
+  .score-chip { font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 20px; flex-shrink: 0; }
+  .score-chip.low { background: var(--red-bg); color: var(--red); }
+  .score-chip.mid { background: var(--amber-bg); color: var(--amber); }
+  .score-chip.high { background: var(--green-bg); color: var(--green); }
+  .chevron { width: 18px; height: 18px; border-radius: 4px; background: var(--surface2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform 0.2s, background 0.15s; }
+  .acc-item.is-open .chevron { transform: rotate(180deg); background: var(--border); }
+  .acc-body { display: none; padding: 0 14px 14px; border-top: 1px solid var(--border); background: var(--bg); }
+  .acc-body.open { display: block; }
+  .sub-tags { display: flex; gap: 6px; flex-wrap: wrap; padding: .85rem 0 .65rem; }
+  .sub-tag { font-size: 11px; padding: 3px 10px; border-radius: 20px; background: var(--surface); border: 1px solid var(--border); color: var(--text-2); }
+  .sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: .75rem; }
+  .sw-card { border-radius: var(--radius-sm); padding: 10px 12px; }
+  .sw-card.s { background: var(--green-bg); }
+  .sw-card.w { background: var(--red-bg); }
+  .sw-head { font-size: 10px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px; }
+  .sw-card.s .sw-head { color: var(--green); }
+  .sw-card.w .sw-head { color: var(--red); }
+  .sw-text { font-size: 12px; line-height: 1.55; color: var(--text); font-weight: 300; }
+  .tip-box { background: var(--blue-bg); border-left: 3px solid #3B82F6; border-radius: var(--radius-sm); padding: 10px 12px; }
+  .tip-head { font-size: 10px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: var(--blue); margin-bottom: 3px; }
+  .tip-text { font-size: 12px; color: var(--text-2); line-height: 1.55; font-weight: 300; }
+  .filler-section { margin-top: .75rem; }
+  .filler-lbl { font-size: 11px; color: var(--text-3); margin-bottom: 5px; }
+  .filler-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .filler-chip { font-size: 11px; padding: 3px 10px; border-radius: 20px; background: var(--amber-bg); color: var(--amber); font-weight: 500; }
+  .watermark { text-align: center; margin-top: 3rem; font-size: 12px; color: var(--text-3); font-weight: 300; }
+  .watermark span { font-family: 'DM Serif Display', serif; font-style: italic; color: var(--text-2); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 560px) {
+    .sw-grid { grid-template-columns: 1fr; }
+    .score-top { flex-direction: column; align-items: flex-start; }
+    .bar-lbl { width: 90px; }
+    .topbar-date { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="back-btn">← Reports</div>
+  <span class="topbar-title">Attempt Feedback</span>
+  <span class="topbar-date">09 Apr 2025</span>
+</div>
+
+<div class="page">
+  <div class="case-header">
+    <h1>Chelsea India Fanbase Strategy</h1>
+    <div class="case-meta">
+      Completed <span class="dot"></span> 7m 33s <span class="dot"></span> 5 sections evaluated <span class="dot"></span> 09 Apr 2025
+    </div>
+  </div>
+
+  <div class="score-hero">
+    <div class="score-top">
+      <div class="overall-score">
+        <span class="num">3.0</span>
+        <span class="lbl">Overall</span>
+      </div>
+      <div class="bars-col">
+        <div class="bar-row"><span class="bar-lbl">Case introduction</span><div class="bar-track"><div class="bar-fill mid" style="width:42%"></div></div><span class="bar-val">42</span></div>
+        <div class="bar-row"><span class="bar-lbl">Hypothesis</span><div class="bar-track"><div class="bar-fill low" style="width:30%"></div></div><span class="bar-val">30</span></div>
+        <div class="bar-row"><span class="bar-lbl">Data analysis</span><div class="bar-track"><div class="bar-fill low" style="width:22%"></div></div><span class="bar-val">22</span></div>
+        <div class="bar-row"><span class="bar-lbl">Hypothesis testing</span><div class="bar-track"><div class="bar-fill low" style="width:12%"></div></div><span class="bar-val">12</span></div>
+        <div class="bar-row"><span class="bar-lbl">Conclusion</span><div class="bar-track"><div class="bar-fill low" style="width:8%"></div></div><span class="bar-val">8</span></div>
+      </div>
+    </div>
+    <div class="speech-pills">
+      <div class="s-pill"><span class="sv">79</span><span class="sl">Speech</span></div>
+      <div class="s-pill"><span class="sv">76</span><span class="sl">Fluency</span></div>
+      <div class="s-pill"><span class="sv">4</span><span class="sl">Fillers</span></div>
+    </div>
+  </div>
+
+  <div class="section-label">Section breakdown ,  tap to expand</div>
+
+  <div class="acc-list">
+    <div class="acc-item">
+      <div class="acc-head" onclick="toggle(this)">
+        <div class="acc-code" style="background:#EAF2EC;color:#2D6A4F;">CI</div>
+        <div class="acc-info"><div class="acc-name">Case introduction</div><div class="acc-sub">Relevance · Depth · Clarity</div></div>
+        <div class="acc-right">
+          <div class="mini-bar"><div class="mini-fill" style="width:42%;background:#D97706"></div></div>
+          <span class="score-chip mid">42/100</span>
+          <div class="chevron"><svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#A09A94" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+      </div>
+      <div class="acc-body">
+        <div class="sub-tags"><span class="sub-tag">Relevance: 55</span><span class="sub-tag">Depth: 30</span><span class="sub-tag">Clarity: 40</span></div>
+        <div class="sw-grid">
+          <div class="sw-card s"><div class="sw-head">Strength</div><div class="sw-text">Focused on India-specific levers: fan clubs, local partnerships, localized content.</div></div>
+          <div class="sw-card w"><div class="sw-head">Weakness</div><div class="sw-text">Did not clarify objective, target growth, timeframe, or constraints upfront.</div></div>
+        </div>
+        <div class="tip-box"><div class="tip-head">Tip</div><div class="tip-text">Start by confirming the goal (% fan growth, time horizon), success metrics, and current India initiatives before exploring cuts like geography.</div></div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <div class="acc-head" onclick="toggle(this)">
+        <div class="acc-code" style="background:#FEF3C7;color:#92400E;">HF</div>
+        <div class="acc-info"><div class="acc-name">Hypothesis framework</div><div class="acc-sub">Logic · Feasibility</div></div>
+        <div class="acc-right">
+          <div class="mini-bar"><div class="mini-fill" style="width:30%;background:#DC2626"></div></div>
+          <span class="score-chip low">30/100</span>
+          <div class="chevron"><svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#A09A94" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+      </div>
+      <div class="acc-body">
+        <div class="sub-tags"><span class="sub-tag">Logic: 30</span><span class="sub-tag">Feasibility: 25</span></div>
+        <div class="sw-grid">
+          <div class="sw-card s"><div class="sw-head">Strength</div><div class="sw-text">Implicitly linked growth to activating existing fans and increasing content output.</div></div>
+          <div class="sw-card w"><div class="sw-head">Weakness</div><div class="sw-text">No explicit hypothesis. Approach not tied to Chelsea's relative share or funnel stages.</div></div>
+        </div>
+        <div class="tip-box"><div class="tip-head">Tip</div><div class="tip-text">State a testable hypothesis before diving in ,  e.g. "Growth will come from converting non-loyal EPL viewers via localized content." Tie it to baseline share and target growth rate.</div></div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <div class="acc-head" onclick="toggle(this)">
+        <div class="acc-code" style="background:#FEE2E2;color:#991B1B;">DA</div>
+        <div class="acc-info"><div class="acc-name">Data analysis</div><div class="acc-sub">Precision · Insightfulness · Thoroughness</div></div>
+        <div class="acc-right">
+          <div class="mini-bar"><div class="mini-fill" style="width:22%;background:#DC2626"></div></div>
+          <span class="score-chip low">22/100</span>
+          <div class="chevron"><svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#A09A94" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+      </div>
+      <div class="acc-body">
+        <div class="sub-tags"><span class="sub-tag">Precision: 20</span><span class="sub-tag">Insightfulness: 20</span><span class="sub-tag">Thoroughness: 25</span></div>
+        <div class="sw-grid">
+          <div class="sw-card s"><div class="sw-head">Strength</div><div class="sw-text">Asked for fan distribution and market size ,  relevant inputs for targeting.</div></div>
+          <div class="sw-card w"><div class="sw-head">Weakness</div><div class="sw-text">Pushed for statewide data after being told unavailable. Did not pivot to proxies.</div></div>
+        </div>
+        <div class="tip-box"><div class="tip-head">Tip</div><div class="tip-text">When granular data is unavailable, pivot to proxies: top cities by EPL viewership, social follower distribution, or engagement by language cluster.</div></div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <div class="acc-head" onclick="toggle(this)">
+        <div class="acc-code" style="background:#FEE2E2;color:#991B1B;">HT</div>
+        <div class="acc-info"><div class="acc-name">Hypothesis testing</div><div class="acc-sub">Validation · Mitigation · Practicality</div></div>
+        <div class="acc-right">
+          <div class="mini-bar"><div class="mini-fill" style="width:12%;background:#DC2626"></div></div>
+          <span class="score-chip low">12/100</span>
+          <div class="chevron"><svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#A09A94" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+      </div>
+      <div class="acc-body">
+        <div class="sub-tags"><span class="sub-tag">Validation: 10</span><span class="sub-tag">Mitigation: 5</span><span class="sub-tag">Practicality: 20</span></div>
+        <div class="sw-grid">
+          <div class="sw-card s"><div class="sw-head">Strength</div><div class="sw-text">Requested additional data inputs, which could support validation if used properly.</div></div>
+          <div class="sw-card w"><div class="sw-head">Weakness</div><div class="sw-text">Did not use evidence to confirm or reject any hypothesis. Did not challenge assumptions like partnership ROI.</div></div>
+        </div>
+        <div class="tip-box"><div class="tip-head">Tip</div><div class="tip-text">Define what evidence would validate each initiative and use the given fan-share baseline to set targets for share gain per region.</div></div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <div class="acc-head" onclick="toggle(this)">
+        <div class="acc-code" style="background:#FEE2E2;color:#991B1B;">C</div>
+        <div class="acc-info"><div class="acc-name">Conclusion</div><div class="acc-sub">Actionability · Strategic alignment</div></div>
+        <div class="acc-right">
+          <div class="mini-bar"><div class="mini-fill" style="width:8%;background:#DC2626"></div></div>
+          <span class="score-chip low">8/100</span>
+          <div class="chevron"><svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#A09A94" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+      </div>
+      <div class="acc-body">
+        <div class="sub-tags"><span class="sub-tag">Actionability: 5</span><span class="sub-tag">Strategic alignment: 10</span></div>
+        <div class="sw-grid">
+          <div class="sw-card s"><div class="sw-head">Strength</div><div class="sw-text">Listed a few relevant actions, though not structured into a concrete plan.</div></div>
+          <div class="sw-card w"><div class="sw-head">Weakness</div><div class="sw-text">No next steps, owners, timelines, or metrics. Session ended at a data request with no path forward.</div></div>
+        </div>
+        <div class="tip-box"><div class="tip-head">Tip</div><div class="tip-text">Close with 3 to 5 specific next steps with KPIs and a 90-day pilot plan ,  e.g. launch regional content calendar, sign 2 academy partners, run monthly screenings in top cities.</div></div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <div class="acc-head" onclick="toggle(this)">
+        <div class="acc-code" style="background:#EFF6FF;color:#1E40AF;">SP</div>
+        <div class="acc-info"><div class="acc-name">Speech quality</div><div class="acc-sub">Fluency · Delivery · Filler words</div></div>
+        <div class="acc-right">
+          <div class="mini-bar"><div class="mini-fill" style="width:79%;background:#16A34A"></div></div>
+          <span class="score-chip high">79/100</span>
+          <div class="chevron"><svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#A09A94" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+      </div>
+      <div class="acc-body">
+        <div class="sub-tags"><span class="sub-tag">Fluency: 76</span><span class="sub-tag">Delivery: 82</span></div>
+        <div class="filler-section">
+          <div class="filler-lbl">Filler words detected</div>
+          <div class="filler-chips"><span class="filler-chip">uh × 3</span><span class="filler-chip">um × 1</span></div>
+        </div>
+        <div class="tip-box" style="margin-top:.75rem"><div class="tip-head">Tip</div><div class="tip-text">Pause briefly before key transitions. A deliberate pause reads as confidence, not hesitation. Reduces filler word usage too.</div></div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+<script>
+  function toggle(header) {
+    const item = header.closest('.acc-item');
+    const body = header.nextElementSibling;
+    const isOpen = body.classList.contains('open');
+    document.querySelectorAll('.acc-body').forEach(b => b.classList.remove('open'));
+    document.querySelectorAll('.acc-item').forEach(i => i.classList.remove('is-open'));
+    if (!isOpen) { body.classList.add('open'); item.classList.add('is-open'); }
+  }
+</script>
+</body>
+</html>
